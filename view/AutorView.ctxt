@@ -1,9 +1,9 @@
 #BlueJ class context
 comment0.target=AutorView
-comment0.text=\n\ Classe\ View\ para\ Autor\ -\ adaptada\ para\ JavaFX\ TableView\n\ Utiliza\ Properties\ para\ binding\ com\ componentes\ JavaFX\n\ *\ @author\ stephanymilhomem\n\ @version\ 1.0\n
+comment0.text=\r\n\ Classe\ View\ para\ Autor\ -\ adaptada\ para\ JavaFX\ TableView\r\n\ Utiliza\ Properties\ para\ binding\ com\ componentes\ JavaFX\r\n\ *\ @author\ stephanymilhomem\r\n\ @version\ 1.0\r\n
 comment1.params=id\ nome\ nacionalidade\ dataNascimento
 comment1.target=AutorView(int,\ java.lang.String,\ java.lang.String,\ java.lang.String)
-comment1.text=\n\ Construtor\ da\ classe\ AutorView\n
+comment1.text=\r\n\ Construtor\ da\ classe\ AutorView\r\n
 comment2.params=
 comment2.target=int\ getId()
 comment2.text=GET\ Method\ Property\ id
