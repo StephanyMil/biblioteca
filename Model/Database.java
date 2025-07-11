@@ -1,10 +1,8 @@
 package Model;
 
 /**
- * Escreva uma descrição da classe Database aqui.
- * 
- * @author (seu nome) 
- * @version (um número da versão ou uma data)
+ * @author stephanymilhomem
+ * @version 1.0 
  */
 import java.sql.*;
 import com.j256.ormlite.jdbc.JdbcConnectionSource;

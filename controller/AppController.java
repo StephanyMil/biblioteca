@@ -139,10 +139,10 @@ public class AppController implements Initializable {
                 return;
             }
 
-            if (livro.getId() == 0) { // Criando um novo
+            if (livro.getId() == 0) {
                 livroRepo.create(livro);
                 showAlert(AlertType.INFORMATION, "Livro salvo com sucesso!");
-            } else { // Atualizando um existente
+            } else {
                 livroRepo.update(livro);
                 showAlert(AlertType.INFORMATION, "Livro atualizado com sucesso!");
             }
@@ -231,11 +231,11 @@ public class AppController implements Initializable {
         }
 
         Autor autor;
-        if (idAutorField.getText().isEmpty()) { // Novo autor
+        if (idAutorField.getText().isEmpty()) {
             autor = new Autor(nome, nacionalidade);
             autorRepo.create(autor);
             showAlert(AlertType.INFORMATION, "Autor salvo com sucesso!");
-        } else { // Atualização
+        } else {
             autor = tabelaAutor.getSelectionModel().getSelectedItem();
             autor.setNome(nome);
             autor.setNacionalidade(nacionalidade);
@@ -363,7 +363,7 @@ public class AppController implements Initializable {
     
     private Date parseDate(String dateString) throws ParseException {
         if (dateString == null || dateString.trim().isEmpty()) {
-            return new Date(); // Retorna data atual se o campo estiver vazio
+            return new Date();
         }
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         dateFormat.setLenient(false);

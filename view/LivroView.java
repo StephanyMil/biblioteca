@@ -8,7 +8,7 @@ public class LivroView {
 
     private final SimpleIntegerProperty id;
     private final SimpleStringProperty titulo;
-    private final SimpleStringProperty autor; // Continua sendo uma String para exibição
+    private final SimpleStringProperty autor;
     private final SimpleIntegerProperty anoPublicacao;
     private final SimpleDoubleProperty preco;
     private final SimpleStringProperty dataCadastro;

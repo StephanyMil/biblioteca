@@ -1,8 +1,6 @@
 package Model;
 
-/**
- * Escreva uma descrição da classe LivroRepository aqui.
- * 
+/** * 
  * @author stephanymilhomem
  * @version 1.0
  */

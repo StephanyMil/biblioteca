@@ -20,9 +20,6 @@ public class Livro {
     @XmlElement
     private String titulo;
 
-    // --- MODIFICAÇÃO PRINCIPAL ---
-    // O campo `autor` agora é um objeto relacionado com a tabela de autores.
-    // `foreignAutoRefresh = true` garante que o objeto Autor seja carregado junto com o Livro.
     @DatabaseField(foreign = true, foreignAutoRefresh = true, canBeNull = false, columnName = "autor_id")
     @XmlElement
     private Autor autor;
@@ -39,7 +36,6 @@ public class Livro {
     @XmlElement
     private Date dataCadastro;
 
-    // Construtor vazio é necessário para ORMLite e JAXB
     public Livro() {}
 
     public String printDataCadastro() {
@@ -48,7 +44,7 @@ public class Livro {
         return dateFor.format(dataCadastro);
     }
 
-    // --- Getters e Setters (Atualizados) ---
+    // --- Getters e Setters ---
     public int getId() { return this.id; }
     public void setId(int id) { this.id = id; }
     public String getTitulo() { return this.titulo; }

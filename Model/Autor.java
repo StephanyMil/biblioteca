@@ -13,7 +13,7 @@ public class Autor {
     @XmlElement
     private int id;
 
-    @DatabaseField(canBeNull = false, unique = true) // Nomes de autores devem ser únicos
+    @DatabaseField(canBeNull = false, unique = true)
     @XmlElement
     private String nome;
 
@@ -21,7 +21,6 @@ public class Autor {
     @XmlElement
     private String nacionalidade;
 
-    // Construtor vazio é essencial para ORMLite e JAXB
     public Autor() {}
 
     public Autor(String nome, String nacionalidade) {
@@ -29,10 +28,6 @@ public class Autor {
         this.nacionalidade = nacionalidade;
     }
 
-    /**
-     * Este método é crucial. O ComboBox em JavaFX o utiliza
-     * para saber qual texto exibir para cada objeto Autor na lista.
-     */
     @Override
     public String toString() {
         return this.nome;
