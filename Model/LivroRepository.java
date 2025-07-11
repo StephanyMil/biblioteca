@@ -1,6 +1,5 @@
 package Model;
 
-
 /**
  * Escreva uma descrição da classe LivroRepository aqui.
  * 
@@ -75,7 +74,7 @@ public class LivroRepository {
         }
     }
 
-    // --- MÉTODOS CRUD ORIGINAIS ---
+    // --- MÉTODOS CRUD ---
 
     public Livro create(Livro livro) {
         int nrows = 0;
@@ -206,7 +205,7 @@ public class LivroRepository {
         if (formato.equalsIgnoreCase("JSON")) {
             result.append("[\n");
             for (int i = 0; i < todosLivros.size(); i++) {
-                result.append(toJson(todosLivros.get(i))); // Chama o método toJson interno
+                result.append(toJson(todosLivros.get(i)));
                 if (i < todosLivros.size() - 1) {
                     result.append(",\n");
                 }
@@ -217,8 +216,7 @@ public class LivroRepository {
             result.append("<livros>\n");
             for (Livro livro : todosLivros) {
                 try {
-                    String xmlLivro = toXml(livro); // Chama o método toXml interno
-                    // Remove o header XML de cada livro individual
+                    String xmlLivro = toXml(livro);
                     xmlLivro = xmlLivro.replaceFirst("\\<\\?xml.*?\\?\\>", "").trim();
                     result.append(xmlLivro).append("\n");
                 } catch (JAXBException e) {
@@ -264,8 +262,8 @@ public class LivroRepository {
      */
     public Livro createFromJSON(String json) {
         try {
-            Livro livro = fromJson(json); // Chama o método fromJson interno
-            livro.setId(0); // Reseta o ID para que seja gerado automaticamente
+            Livro livro = fromJson(json);
+            livro.setId(0);
             return create(livro);
         } catch (Exception e) {
             System.out.println("Erro ao criar livro a partir de JSON: " + e);
@@ -280,8 +278,8 @@ public class LivroRepository {
      */
     public Livro createFromXML(String xml) {
         try {
-            Livro livro = fromXml(xml); // Chama o método fromXml interno
-            livro.setId(0); // Reseta o ID para que seja gerado automaticamente
+            Livro livro = fromXml(xml);
+            livro.setId(0);
             return create(livro);
         } catch (Exception e) {
             System.out.println("Erro ao criar livro a partir de XML: " + e);
@@ -300,18 +298,15 @@ public class LivroRepository {
         
         if (formato.equalsIgnoreCase("JSON")) {
             try {
-                // Remove colchetes e quebra por objetos JSON
                 dados = dados.trim();
                 if (dados.startsWith("[") && dados.endsWith("]")) {
                     dados = dados.substring(1, dados.length() - 1);
                 }
                 
-                // Divide por objetos JSON (busca por },{)
                 String[] livrosJson = dados.split("\\},\\s*\\{");
                 
                 for (int i = 0; i < livrosJson.length; i++) {
                     String livroJson = livrosJson[i].trim();
-                    // Adiciona chaves se necessário
                     if (!livroJson.startsWith("{")) {
                         livroJson = "{" + livroJson;
                     }
@@ -329,20 +324,15 @@ public class LivroRepository {
             }
         } else if (formato.equalsIgnoreCase("XML")) {
             try {
-                // Extrai cada livro do XML
-                // Note: Esta lógica de split XML pode ser frágil dependendo do XML de entrada.
-                // Para XMLs mais complexos, seria melhor usar um parser XML como SAX ou DOM.
                 String[] livrosXml = dados.split("</livro>");
                 
                 for (int i = 0; i < livrosXml.length - 1; i++) {
                     String livroXml = livrosXml[i].trim();
                     
-                    // Encontra o início do livro
                     int startIndex = livroXml.lastIndexOf("<livro>");
                     if (startIndex != -1) {
                         livroXml = livroXml.substring(startIndex) + "</livro>";
                         
-                        // Adiciona header XML se necessário
                         if (!livroXml.contains("<?xml")) {
                             livroXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + livroXml;
                         }
