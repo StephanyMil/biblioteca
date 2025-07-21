@@ -2,12 +2,4 @@
 comment0.target=AutorRepository
 comment1.params=db
 comment1.target=AutorRepository(Database)
-comment2.params=autor
-comment2.target=Autor\ create(Autor)
-comment3.params=autor
-comment3.target=void\ update(Autor)
-comment4.params=autor
-comment4.target=void\ delete(Autor)
-comment5.params=
-comment5.target=java.util.List\ loadAll()
-numComments=6
+numComments=2

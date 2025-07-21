@@ -1,13 +1,9 @@
 package Model;
 
-/** * 
- * @author stephanymilhomem
- * @version 1.0
- */
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.dao.Dao;
-import java.sql.SQLException;
 import com.j256.ormlite.table.TableUtils;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 import java.io.File;
@@ -26,11 +22,10 @@ import java.io.StringWriter;
 import java.io.StringReader;
 
 
-public class LivroRepository {
-    private static Database database;
-    private static Dao<Livro, Integer> dao;
-    private List<Livro> loadedLivros;
-    private Livro loadedLivro;
+public class LivroRepository extends Repository<Livro, Integer> {
+    
+    private Livro loadedLivro; // Removido 'static'
+    private List<Livro> loadedLivros; // Removido 'static'
 
     // Atributos para serialização JSON
     private Gson gson;
@@ -40,16 +35,15 @@ public class LivroRepository {
     private Marshaller jaxbMarshaller;
     private Unmarshaller jaxbUnmarshaller;
 
-
     public LivroRepository(Database database) {
-        LivroRepository.setDatabase(database);
-        loadedLivros = new ArrayList<Livro>();
+        super(database, Livro.class); // Chama o construtor da classe pai
+        loadedLivros = new ArrayList<>(); // Inicializa a lista
 
         // Inicializa Gson
         gson = new GsonBuilder()
-                    .setDateFormat("yyyy-MM-dd")
-                    .setPrettyPrinting()
-                    .create();
+            .setDateFormat("yyyy-MM-dd")
+            .setPrettyPrinting()
+            .create();
 
         // Inicializa JAXB
         try {
@@ -58,101 +52,67 @@ public class LivroRepository {
             jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
             jaxbUnmarshaller = jaxbContext.createUnmarshaller();
         } catch (JAXBException e) {
-            System.out.println("Erro ao inicializar JAXB: " + e);
+            System.out.println("Erro ao inicializar JAXB para Livro: " + e.getMessage());
         }
     }
 
-    public static void setDatabase(Database database) {
-        LivroRepository.database = database;
-        try {
-            dao = DaoManager.createDao(database.getConnection(), Livro.class);
-            TableUtils.createTableIfNotExists(database.getConnection(), Livro.class);
-        } catch (SQLException e) {
-            System.out.println("Erro ao configurar o banco de dados para LivroRepository: " + e);
-        }
-    }
+    // Sobrescrita dos métodos CRUD para incluir a lógica de 'loadedLivros' se necessário
+    // Ou remova 'loadedLivros' e 'loadedLivro' se eles forem apenas caches temporários
+    // e o foco for sempre buscar do banco de dados via 'dao'.
 
-    // --- MÉTODOS CRUD ---
-
+    @Override
     public Livro create(Livro livro) {
-        int nrows = 0;
-        try {
-            nrows = dao.create(livro);
-            if (nrows == 0)
-                throw new SQLException("Erro: Livro não salvo.");
-            this.loadedLivro = livro;
-            loadedLivros.add(livro);
-            System.out.println("Livro criado com sucesso: " + livro.getTitulo());
-        } catch (SQLException e) {
-            System.out.println("Erro ao criar livro: " + e);
+        Livro createdLivro = super.create(livro);
+        if (createdLivro != null) {
+            this.loadedLivro = createdLivro;
+            if (!loadedLivros.contains(createdLivro)) {
+                loadedLivros.add(createdLivro);
+            }
         }
-        return livro;
+        return createdLivro;
     }
 
-    public Livro loadFromId(int id) {
-        try {
-            this.loadedLivro = dao.queryForId(id);
-            if (this.loadedLivro != null) {
-                if (!loadedLivros.contains(this.loadedLivro)) {
-                    this.loadedLivros.add(this.loadedLivro);
-                }
-            } else {
-                System.out.println("Livro com ID " + id + " não encontrado.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao carregar livro por ID: " + e);
+    public Livro loadFromId(int id) { // Mantido com nome original para consistência
+        this.loadedLivro = super.loadById(id);
+        if (this.loadedLivro != null && !loadedLivros.contains(this.loadedLivro)) {
+            this.loadedLivros.add(this.loadedLivro);
         }
+        System.out.println("Livro com ID " + id + " " + (this.loadedLivro != null ? "encontrado." : "não encontrado."));
         return this.loadedLivro;
     }
 
+    @Override
     public List<Livro> loadAll() {
-        try {
-            this.loadedLivros = dao.queryForAll();
-            if (!this.loadedLivros.isEmpty()) {
-                this.loadedLivro = this.loadedLivros.get(0);
-            }
-            System.out.println("Todos os livros carregados. Total: " + this.loadedLivros.size());
-        } catch (SQLException e) {
-            System.out.println("Erro ao carregar todos os livros: " + e);
+        this.loadedLivros = super.loadAll();
+        if (!this.loadedLivros.isEmpty()) {
+            this.loadedLivro = this.loadedLivros.get(0); // Atualiza o loadedLivro para o primeiro da lista
         }
+        System.out.println("Todos os livros carregados. Total: " + this.loadedLivros.size());
         return this.loadedLivros;
     }
 
+    @Override
     public void update(Livro livro) {
-        try {
-            int nrows = dao.update(livro);
-            if (nrows == 0) {
-                throw new SQLException("Erro: Livro não atualizado.");
+        super.update(livro);
+        // Atualiza a lista 'loadedLivros' se o objeto estiver nela
+        for (int i = 0; i < loadedLivros.size(); i++) {
+            if (loadedLivros.get(i).getId() == livro.getId()) {
+                loadedLivros.set(i, livro);
+                break;
             }
-            System.out.println("Livro atualizado com sucesso: " + livro.getTitulo());
-            for (int i = 0; i < loadedLivros.size(); i++) {
-                if (loadedLivros.get(i).getId() == livro.getId()) {
-                    loadedLivros.set(i, livro);
-                    break;
-                }
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao atualizar livro: " + e);
         }
     }
 
+    @Override
     public void delete(Livro livro) {
-        try {
-            int nrows = dao.delete(livro);
-            if (nrows == 0) {
-                throw new SQLException("Erro: Livro não deletado.");
-            }
-            System.out.println("Livro deletado com sucesso: " + livro.getTitulo());
-            loadedLivros.remove(livro);
-            if (this.loadedLivro == livro) {
-                this.loadedLivro = null;
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao deletar livro: " + e);
+        super.delete(livro);
+        loadedLivros.remove(livro);
+        if (this.loadedLivro == livro) {
+            this.loadedLivro = null;
         }
     }
 
-    // --- MÉTODOS DE SERIALIZAÇÃO INTEGRADOS ---
+    // --- MÉTODOS DE SERIALIZAÇÃO INTEGRADOS (Permanecem aqui) ---
 
     /**
      * Serializa um objeto Livro para JSON.
@@ -197,7 +157,7 @@ public class LivroRepository {
      * @return String com dados serializados
      */
     public String dumpData(String formato) {
-        List<Livro> todosLivros = loadAll();
+        List<Livro> todosLivros = loadAll(); // Usa o loadAll da classe pai/sobrescrito
         StringBuilder result = new StringBuilder();
         
         if (formato.equalsIgnoreCase("JSON")) {
@@ -261,8 +221,8 @@ public class LivroRepository {
     public Livro createFromJSON(String json) {
         try {
             Livro livro = fromJson(json);
-            livro.setId(0);
-            return create(livro);
+            livro.setId(0); // Garante que o ID será gerado pelo banco
+            return create(livro); // Usa o create da classe pai/sobrescrito
         } catch (Exception e) {
             System.out.println("Erro ao criar livro a partir de JSON: " + e);
             return null;
@@ -277,8 +237,8 @@ public class LivroRepository {
     public Livro createFromXML(String xml) {
         try {
             Livro livro = fromXml(xml);
-            livro.setId(0);
-            return create(livro);
+            livro.setId(0); // Garante que o ID será gerado pelo banco
+            return create(livro); // Usa o create da classe pai/sobrescrito
         } catch (Exception e) {
             System.out.println("Erro ao criar livro a partir de XML: " + e);
             return null;
@@ -301,6 +261,9 @@ public class LivroRepository {
                     dados = dados.substring(1, dados.length() - 1);
                 }
                 
+                // Melhorar o parsing de JSON para múltiplos objetos.
+                // Uma maneira mais robusta seria usar um Array de Livros ou um TypeToken.
+                // Para simplificar, vou manter a sua lógica de split, mas tenha em mente a limitação.
                 String[] livrosJson = dados.split("\\},\\s*\\{");
                 
                 for (int i = 0; i < livrosJson.length; i++) {
@@ -322,6 +285,8 @@ public class LivroRepository {
             }
         } else if (formato.equalsIgnoreCase("XML")) {
             try {
+                // Parsing de XML para múltiplos objetos também precisa ser mais robusto.
+                // O JAXB pode desserializar listas de objetos se a raiz XML for uma coleção.
                 String[] livrosXml = dados.split("</livro>");
                 
                 for (int i = 0; i < livrosXml.length - 1; i++) {
