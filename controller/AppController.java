@@ -1,10 +1,10 @@
 package controller;
 
-import Model.Autor;
-import Model.AutorRepository;
-import Model.Database;
-import Model.Livro;
-import Model.LivroRepository;
+import model.Autor;
+import model.AutorRepository;
+import model.Database;
+import model.Livro;
+import model.LivroRepository;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

@@ -29,7 +29,7 @@ Este é um sistema de gerenciamento de biblioteca desenvolvido em JavaFX, que pe
 
 O projeto segue o padrão arquitetural **MVC (Model-View-Controller)**:
 
-  * `src/Model/`: Contém as classes de modelo (`Autor.java`, `Database.java`, `Livro.java`) e os repositórios (`AutorRepository.java`, `LivroRepository.java`) que interagem com o banco de dados e a lógica de negócio.
+  * `src/model/`: Contém as classes de modelo (`Autor.java`, `Database.java`, `Livro.java`) e os repositórios (`AutorRepository.java`, `LivroRepository.java`) que interagem com o banco de dados e a lógica de negócio.
   * `src/View/`: Contém o arquivo FXML (`app.fxml`) que define a interface gráfica e as classes "View Model" (`LivroView.java`, `AutorView.java`) que adaptam os dados para exibição na interface.
   * `src/Controller/`: Contém o `AppController.java`, que gerencia a lógica de interação entre a View e o Model, respondendo a eventos da interface.
   * `lib/`: (Necessário criar) Pasta para as bibliotecas JAR externas.
